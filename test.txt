@@ -1,0 +1,287 @@
+ls -al ~/.ssh
+ssh -keygen -t rsa -b 4096 -C "email"
+clip < ~/.ssh/id_rsa.pub
+
+git commit -m " - close #num"
+git remote update 
+git rebase origin/main
+git checkout main
+git merge issue --no-ff
+git push origin main
+
+package unit
+
+import (
+	//"fmt" -> not use :D
+	"testing"
+
+	"github.com/asaskevich/govalidator"
+	. "github.com/onsi/gomega"
+	"github.com/siriphobmean/sa-66-mean/entity"
+)
+
+func TestFirstName(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`FirstName is required`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "123456",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("กรุณากรอกชื่อ !")))
+	})
+
+	t.Run(`FirstName pattern is not true`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ ศักดิ์ศรี ณ มหานครราชสีมา",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "123456",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("ชื่อต้องมีตัวอักษรไม่เกิน 30 ตัว")))
+	})
+}
+
+func TestEmail(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`Email is required`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "",
+			Password: "123456",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("กรุณากรอกอีเมล !")))
+	})
+
+	t.Run(`Email pattern is not true`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean.com",
+			Password: "123456",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("รูปแบบอีเมลไม่ถูกต้อง")))
+	})
+}
+
+func TestPassword(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`Password is required`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("กรุณากรอกรหัสผ่าน !")))
+	})
+
+	t.Run(`Password pattern is not true`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "1234",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("รหัสผ่านต้องไม่ต่ำกว่า 5 ตัว")))
+	})
+}
+
+func TestAge(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`Age is required`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "12345",
+			Age: 0,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("กรุณากรอกอายุ !")))
+	})
+}
+
+func TestSalary(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`Salary is required`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "12345",
+			Age: 20,
+			Salary: 0,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("กรุณากรอกเงินเดือน !")))
+	})
+
+	t.Run(`Salary pattern is not true`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "12345",
+			Age: 20,
+			Salary: 55.123,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).NotTo(BeTrue())
+		g.Expect(err).NotTo(BeNil())
+
+		g.Expect(err.Error()).To(Equal(("เงินเดือนต้องเป็นทศนิยม 2 ตำแหน่ง")))
+	})
+}
+
+func TestEmployeeValidAll(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	t.Run(`Employee pattern is valid all`, func(t *testing.T) {
+		employee := entity.Employee{
+			FirstName: "นายศิริภพ",
+			LastName: "พูนประสิทธิ์",
+			Email: "mean@gmail.com",
+			Password: "12345",
+			Age: 20,
+			Salary: 20000.55,
+			RoleID: 1,
+			GenderID: 1, 
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		g.Expect(ok).To(BeTrue())
+		g.Expect(err).To(BeNil())
+	})
+}
+
+package entity
+
+import (
+	"gorm.io/gorm"
+	"math"
+	"github.com/asaskevich/govalidator"
+)
+
+type Employee struct {
+	gorm.Model
+
+	FirstName string `valid:"required~กรุณากรอกชื่อ !, maxstringlength(30)~ชื่อต้องมีตัวอักษรไม่เกิน 30 ตัว"`
+	LastName string `valid:"required~กรุณากรอกนามสกุล !, maxstringlength(30)~นามสกุลต้องมีตัวอักษรไม่เกิน 30 ตัว"`
+	Email string `gorm:"uniqueIndex" valid:"required~กรุณากรอกอีเมล !, email~รูปแบบอีเมลไม่ถูกต้อง"`
+	Password string `valid:"required~กรุณากรอกรหัสผ่าน !, minstringlength(5)~รหัสผ่านต้องไม่ต่ำกว่า 5 ตัว"`
+	Age int `valid:"required~กรุณากรอกอายุ !"`
+	Salary float64 `gorm:"type:decimal(9,2)" valid:"required~กรุณากรอกเงินเดือน !, ValidSalary~เงินเดือนต้องเป็นทศนิยม 2 ตำแหน่ง"`
+
+	Order []Order `gorm:"foreignKey:EmployeeID;"`
+	Promotion []Promotion `gorm:"foreignKey:EmployeeID"`
+	Payment []Payment `gorm:"foreignKey:EmployeeID"` // ตอนรวมไฟล์กับเพื่อน ค่อยเอา comment ออก -> เพราะยังไม่ได้สร้าง entity Payment
+	Accounting []Accounting `gorm:"foreignKey:EmployeeID"` // ตอนรวมไฟล์กับเพื่อน ค่อยเอา comment ออก -> เพราะยังไม่ได้สร้าง entity Account
+
+	// FK
+	RoleID uint `valid:"required~กรุณาเลือกตำแหน่ง !"`
+	Role Role `gorm:"references:id"`
+	GenderID uint `valid:"required~กรุณาเลือกเพศ !"`
+	Gender Gender `gorm:"references:id"`
+} // Clear!
+
+func init() {
+	govalidator.CustomTypeTagMap.Set("ValidSalary", govalidator.CustomTypeValidator(validateSalary))
+}
+
+func validateSalary(i interface{}, context interface{}) bool {
+    value, ok := i.(float64)
+    if !ok {
+        return false
+    }
+
+    fractionalPart := float64(value*100) - math.Floor(float64(value*100))
+    return fractionalPart == 0.00
+}
